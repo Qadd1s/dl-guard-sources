@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ru">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+		<title>DL Guard</title>
+		<link rel="shortcut icon" href="./favicon.png" type="image/png" />
+		<link rel="stylesheet" href="./styles.css" />
+
+		<script src="./eel.js"></script>
+	</head>
+
+	<body>
+		<svg style="display: none">
+			<symbol id="nfc-logo" viewBox="0 0 48 48">
+				<path
+					d="M40 4.17h-32c-2.21 0-4 1.79-4 4v32c0 2.21 1.79 4 4 4h32c2.21 0 4-1.79 4-4v-32c0-2.21-1.79-4-4-4zm0 36h-32v-32h32v32zm-4-28h-10c-2.21 0-4 1.79-4 4v4.55c-1.19.69-2 1.97-2 3.45 0 2.21 1.79 4 4 4s4-1.79 4-4c0-1.48-.81-2.75-2-3.45v-4.55h6v16h-16v-16h4v-4h-8v24h24v-24z"
+				/>
+			</symbol>
+		</svg>
+
+		<main>
+			<section class="readers">
+				<ul id="readers">
+					<!-- Сюда выводится список устройств -->
+				</ul>
+			</section>
+
+			<section class="buttons">
+				<button onclick="toggleModal('new-device')" class="add-btn">+</button>
+				<button onclick="toggleModal('settings')" class="settings-btn">
+					Настройки
+				</button>
+			</section>
+		</main>
+
+		<!-- Добавление нового устройста (Модальное окно) -->
+		<div id="new-device" class="modal">
+			<div id="new-device-content" class="modal__content">
+				<button class="modal-close-btn" onclick="toggleModal('new-device')">
+					x
+				</button>
+				<h3>Добавление устройства</h3>
+				<input id="portInput" type="text" placeholder="Введите COM порт" />
+				<input
+					id="nameInput"
+					type="text"
+					placeholder="Введите название устройства"
+				/>
+				<button class="save-btn" onclick="addNewDevice()">Сохранить</button>
+				<span id="feedback-nd" class="feedback hidden"></span>
+			</div>
+		</div>
+
+		<!-- Настройки устройств (Модальное окно) -->
+		<div id="settings" class="modal">
+			<div id="settings-content" class="modal__content">
+				<button class="modal-close-btn" onclick="toggleModal('settings')">
+					x
+				</button>
+				<h3>Настройки</h3>
+				<div class="path">
+					<input type="text" id="pathInput" />
+					<button onclick="changePath()">Изменить путь</button>
+				</div>
+				<div id="changeReadersList">
+					<!-- Сюда выводится список устройств -->
+				</div>
+				<span id="feedback-stg" class="feedback hidden"></span>
+			</div>
+		</div>
+
+		<!-- Мини-модальное окно для вывода ошибок -->
+		<div class="errors-output hidden"></div>
+
+		<script src="./index.js"></script>
+	</body>
+</html>
