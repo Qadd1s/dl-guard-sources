@@ -6,9 +6,6 @@ const port = 4444;
 // Добавляем возможность POST-запросов
 app.use(express.urlencoded({ extended: true }));
 
-// Подключаем статику
-app.use(express.static("public"));
-
 // Подключение к БД
 const mongoose = require("mongoose");
 mongoose.connect("адрес базы данных");
@@ -75,26 +72,5 @@ app.get("/check-uid", async function (req, res) {
 	} catch (error) {
 		res.send("error");
 		console.log(error);
-	}
-});
-
-// Мобильное приложение
-app.post("/set-uid", async function (req, res) {
-	const { login, password } = req.body;
-
-	try {
-		let student = await Student.findOne({ login: login });
-
-		if (student) {
-			if (student.password == password) {
-				res.send(student);
-			} else {
-				res.send("error");
-			}
-		} else {
-			res.send("error");
-		}
-	} catch (error) {
-		res.send("error");
 	}
 });
