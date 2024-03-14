@@ -123,9 +123,9 @@ def device_communication(device):
 		try:
 			line = ser.readline().decode().strip()
 			if line:
-				response = requests.get(
+				response = requests.post(
 					get_settings()[1]["path"],
-					params={'uid': str(line)}
+					json={'uid': str(line)}
 				)
 
 				if response.status_code == 200:
