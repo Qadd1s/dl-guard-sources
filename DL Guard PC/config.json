@@ -1,1 +1,1 @@
-[[{"port": "COM5", "name": "", "isWorking": false}, {"port": "COM3", "name": "", "isWorking": false}], {"path": "http://localhost:3003/check-uid"}]
+[[], {"path": "http://localhost:3003/check-uid"}]

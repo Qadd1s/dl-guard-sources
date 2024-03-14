@@ -137,11 +137,12 @@ def device_communication(device):
 					elif response == "false":
 						eel.updateOutput(get_settings()[0][device]["port"],
 											"<i>Доступ запрещён</i>")
-					else:
-						eel.sendError("<em>Внимание!<br>Ошибка в работе сервера!</em>")
+					
+					ser.close()
+					eel.sleep(2.0)
+					ser.open()
 				else:
 					eel.sendError("<em>Внимание!<br>Ошибка в работе сервера!</em>")
-				eel.sleep(3.0)
 		except serial.SerialException:
 			eel.sendError("<em>Внимание!<br>Ошибка в работе устройства или связанного с ней модуля!</em>")
 			break
