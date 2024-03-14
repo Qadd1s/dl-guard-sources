@@ -5,6 +5,7 @@ const port = 3003;
 
 // Добавляем возможность POST-запросов
 app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
 // Подключение к БД
 const mongoose = require("mongoose");
@@ -60,8 +61,8 @@ app.listen(port, function () {
 });
 
 // Сервисная часть
-app.get("/check-uid", async function (req, res) {
-	const uid = req.query.uid;
+app.post("/check-uid", async function (req, res) {
+	const uid = req.body.uid;
 
 	try {
 		const student = await Student.findOne({ uid: uid });
