@@ -73,6 +73,14 @@ app.post("/check-uid", async function (req, res) {
 		if (student) {
 			if (student.isStudying) {
 				res.send("true");
+
+				try {
+					student.arrivalTime = new Date();
+					await student.save();
+				} catch (error) {
+					detectGlitch("server");
+					console.error("No arrival time noted");
+				}
 			} else {
 				res.send("false");
 			}
@@ -85,9 +93,11 @@ app.post("/check-uid", async function (req, res) {
 	}
 });
 
-app.get("/glitch-detected", async function (req) {
-	const type = req.body.type;
+app.get("/glitch-detected", function (req) {
+	detectGlitch(req.body.type);
+});
 
+async function detectGlitch(type) {
 	const newGlitch = new Glitch({
 		errType: type,
 	});
@@ -97,4 +107,4 @@ app.get("/glitch-detected", async function (req) {
 	} catch (error) {
 		console.error(error);
 	}
-});
+}
