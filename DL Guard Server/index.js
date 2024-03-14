@@ -1,17 +1,17 @@
-// Подключение express и создание сервера
+// Import "express" and create a server
 const express = require("express");
 const app = express();
 const port = 3003;
 
-// Добавляем возможность POST-запросов
+// Adding the ability to make POST-requests
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// Подключение к БД
+// Import "mongoose" and connect to the database
 const mongoose = require("mongoose");
 mongoose.connect("mongodb://127.0.0.1:27017/dl-guard");
 
-// Создание схем
+// Create a schemes
 const studentsSchema = new mongoose.Schema({
 	firstname: {
 		required: true,
@@ -42,25 +42,28 @@ const studentsSchema = new mongoose.Schema({
 	arrivalTime: Date,
 });
 
-const glitchesSchema = new mongoose.Schema({
-	date: Date,
-	serverErrors: Number,
-	devicesErrors: Number,
-	programErrors: Number,
-});
+const glitchesSchema = new mongoose.Schema(
+	{
+		errType: {
+			type: String,
+			required: true,
+		},
+	},
+	{ timestamps: true }
+);
 
 const statsSchema = new mongoose.Schema({});
 
-// Соединяем схему с коллекцией
+// Connecting schemes with collections
 const Student = mongoose.model("students", studentsSchema);
-const Glitches = mongoose.model("glitches", glitchesSchema);
+const Glitch = mongoose.model("glitches", glitchesSchema);
 
-// Запуск сервера
+// Starting the server
 app.listen(port, function () {
 	console.log(`Сервер запущен по адресу: http://localhost:${port}/`);
 });
 
-// Сервисная часть
+// Routes
 app.post("/check-uid", async function (req, res) {
 	const uid = req.body.uid;
 
@@ -82,56 +85,16 @@ app.post("/check-uid", async function (req, res) {
 	}
 });
 
-app.get("/error-message", async function (req, res) {
-	const type = req.query.type;
-	const today = new Date();
-	today.setHours(0, 0, 0, 0);
-	const isoDate = today.toISOString();
+app.get("/glitch-detected", async function (req) {
+	const type = req.body.type;
 
-	let todaysGlitches = await Glitches.findOne({ date: isoDate });
+	const newGlitch = new Glitch({
+		errType: type,
+	});
 
-	if (todaysGlitches) {
-		if (type == "server") {
-			todaysGlitches.serverErrors++;
-		} else if (type == "device") {
-			todaysGlitches.devicesErrors++;
-		} else {
-			todaysGlitches.programErrors++;
-		}
-
-		try {
-			await todaysGlitches.save();
-		} catch (error) {
-			console.error(error);
-		}
-	} else {
-		const newGlitches = new Glitches(
-			type == "device"
-				? {
-						date: isoDate,
-						serverErrors: 0,
-						devicesErrors: 1,
-						programErrors: 0,
-				  }
-				: type == "server"
-				? {
-						date: isoDate,
-						serverErrors: 1,
-						devicesErrors: 0,
-						programErrors: 0,
-				  }
-				: {
-						date: isoDate,
-						serverErrors: 0,
-						devicesErrors: 0,
-						programErrors: 1,
-				  }
-		);
-
-		try {
-			await newGlitches.save();
-		} catch (error) {
-			console.error(error);
-		}
+	try {
+		await newGlitch.save();
+	} catch (error) {
+		console.error(error);
 	}
 });

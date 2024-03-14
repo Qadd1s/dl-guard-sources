@@ -123,6 +123,8 @@ def device_communication(device):
 		try:
 			line = ser.readline().decode().strip()
 			if line:
+				ser.close()
+
 				response = requests.post(
 					get_settings()[1]["path"],
 					json={'uid': str(line)}
@@ -137,18 +139,22 @@ def device_communication(device):
 					elif response == "false":
 						eel.updateOutput(get_settings()[0][device]["port"],
 											"<i>Доступ запрещён</i>")
-					
-					ser.close()
+					else:
+						eel.showError("<em>Внимание!<br>Ошибка в работе сервера!</em>")
+						requests.get(get_settings()[1]["error"], json={"type": "server"})
+						
 					eel.sleep(2.0)
 					ser.open()
 				else:
-					eel.sendError("<em>Внимание!<br>Ошибка в работе сервера!</em>")
-		except serial.SerialException:
-			eel.sendError("<em>Внимание!<br>Ошибка в работе устройства или связанного с ней модуля!</em>")
-			break
-		except requests.RequestException:
-			eel.sendError("<em>Внимание!<br>Ошибка в отправке запроса на сервер!</em>")
-			break
+					eel.showError("<em>Внимание!<br>Ошибка в работе сервера!</em>")
+		except serial.SerialException or serial.PortNotOpenError:
+			eel.showError("<em>Внимание!<br>Ошибка в работе устройства или связанного с ней модуля!</em>")
+			requests.get(get_settings()[1]["error"], json={"type": "device"})
+			change_state(device)
+		except requests.RequestException or requests.ConnectionError:
+			eel.showError("<em>Внимание!<br>Ошибка в отправке запроса на сервер!</em>")
+			requests.get(get_settings()[1]["error"], json={"type": "program"})
+			change_state(device)
 	ser.close()
 
 

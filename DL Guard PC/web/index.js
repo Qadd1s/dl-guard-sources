@@ -1,15 +1,17 @@
 const rlNode = document.getElementById("readers");
 const rlcNode = document.getElementById("changeReadersList");
 const pathInput = document.getElementById("pathInput");
+const errorPathInput = document.getElementById("errorPathInput");
 
 eel.expose(getReaders);
 eel.expose(sendFeedback);
 eel.expose(changeState);
 eel.expose(updateOutput);
-eel.expose(sendError);
+eel.expose(showError);
 
 let readersList = [];
 let serverPath;
+let errorPath;
 
 const renderDevices = () => {
 	rlNode.innerHTML = "";
@@ -102,6 +104,20 @@ const changePath = () => {
 	}
 };
 
+const changeErrorPath = () => {
+	if (errorPathInput.value.trim() == "") {
+		sendFeedback(
+			"settings",
+			"<i>Ошибка!<br>Поле адреса отправки отчётов не может быть пустым!</i>"
+		);
+	} else if (errorPathInput.value.trim() == errorPath) {
+		return;
+	} else {
+		eel.change_path(errorPathInput.value.trim())();
+		errorPathInput.value = "";
+	}
+};
+
 const changeName = (id) => {
 	const newName = document.getElementById(`nameInputChange-${id}`).value.trim();
 	eel.change_name(id, newName)();
@@ -187,8 +203,8 @@ function sendFeedback(type, text) {
 	}, 2500);
 }
 
-function sendError(text) {
-	const outputError = document.getElementsByClassName("errors-output");
+function showError(text) {
+	const outputError = document.querySelector(".errors-output");
 	outputError.innerHTML = text;
 	outputError.classList.remove("hidden");
 	setTimeout(() => {
@@ -203,7 +219,9 @@ function getReaders() {
 	eel.get_settings()(function (data) {
 		readersList = data[0];
 		serverPath = data[1].path;
+		errorPath = data[1].error;
 		pathInput.placeholder = serverPath;
+		errorPathInput.placeholder = errorPath;
 		renderDevices();
 	});
 	eel.render_devices()();

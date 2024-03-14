@@ -378,7 +378,8 @@ main {
 	column-gap: 10px;
 }
 
-#pathInput {
+#pathInput,
+#errorPathInput {
 	width: 60%;
 }
 
@@ -410,6 +411,7 @@ main {
 	border: 3px solid var(--add);
 	font-size: 18px;
 	text-align: center;
+	transition: 0.35s all;
 }
 
 .errors-output em {
