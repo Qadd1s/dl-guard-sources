@@ -39,24 +39,29 @@ const studentsSchema = new mongoose.Schema({
 		required: true,
 		type: Boolean,
 	},
-	arrivalTime: Date,
 });
 
-const glitchesSchema = new mongoose.Schema(
-	{
-		errType: {
-			type: String,
-			required: true,
-		},
+const statsSchema = new mongoose.Schema({
+	date: {
+		required: true,
+		type: Date,
 	},
-	{ timestamps: true }
-);
-
-const statsSchema = new mongoose.Schema({});
+	systemErrors: [
+		{
+			errType: String,
+		},
+	],
+	visitors: [
+		{
+			student: mongoose.Schema.Types.ObjectId,
+			time: Date,
+		},
+	],
+});
 
 // Connecting schemes with collections
 const Student = mongoose.model("students", studentsSchema);
-const Glitch = mongoose.model("glitches", glitchesSchema);
+const Stat = mongoose.model("stats", statsSchema);
 
 // Starting the server
 app.listen(port, function () {
@@ -74,13 +79,7 @@ app.post("/check-uid", async function (req, res) {
 			if (student.isStudying) {
 				res.send("true");
 
-				try {
-					student.arrivalTime = new Date();
-					await student.save();
-				} catch (error) {
-					detectGlitch("server");
-					console.error("No arrival time noted");
-				}
+				detectStudent(student._id);
 			} else {
 				res.send("false");
 			}
@@ -97,14 +96,64 @@ app.get("/glitch-detected", function (req) {
 	detectGlitch(req.body.type);
 });
 
+// Functions
 async function detectGlitch(type) {
-	const newGlitch = new Glitch({
-		errType: type,
-	});
+	let today = new Date();
+	today.setHours(6, 0, 0, 0);
+	today = today.toISOString();
 
-	try {
-		await newGlitch.save();
-	} catch (error) {
-		console.error(error);
+	const todayStat = await Stat.findOne({ date: today });
+
+	if (todayStat) {
+		todayStat.systemErrors.push({ errType: type });
+
+		try {
+			await todayStat.save();
+		} catch (error) {
+			console.error(error);
+		}
+	} else {
+		const newStat = new Stat({
+			date: today,
+			systemErrors: [{ errType: type }],
+			visitors: [],
+		});
+
+		try {
+			await newStat.save();
+		} catch (error) {
+			console.error(error);
+		}
+	}
+}
+
+async function detectStudent(student) {
+	let today = new Date();
+	today.setHours(6, 0, 0, 0);
+	today = today.toISOString();
+
+	const todayStat = await Stat.findOne({ date: today });
+	const timeNow = new Date();
+
+	if (todayStat) {
+		todayStat.visitors.push({ student: student, time: timeNow.toISOString() });
+
+		try {
+			await todayStat.save();
+		} catch (error) {
+			console.error(error);
+		}
+	} else {
+		const newStat = new Stat({
+			date: today,
+			systemErrors: [],
+			visitors: [{ student: student, time: timeNow.toISOString() }],
+		});
+
+		try {
+			await newStat.save();
+		} catch (error) {
+			console.error(error);
+		}
 	}
 }
