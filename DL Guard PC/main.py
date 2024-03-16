@@ -23,7 +23,15 @@ def change_path(newPath):
 	data[1]["path"] = newPath
 	json_write(data)
 	eel.sendFeedback(
-		"settings", "<em>Успешно!<br>Адрес отправки успешно изменён!</em>")
+		"settings", "<em>Успешно!<br>Адрес отправки данных успешно изменён!</em>")
+	eel.getReaders()
+
+@eel.expose
+def change_stat(newPath):
+	data = get_settings()
+	data[1]["stat"] = newPath
+	json_write(data)
+	eel.sendFeedback("settings", "<em>Успешно!<br>Адрес отправки статистики успешно изменён!</em>")
 	eel.getReaders()
 
 
@@ -141,7 +149,7 @@ def device_communication(device):
 											"<i>Доступ запрещён</i>")
 					else:
 						eel.showError("<em>Внимание!<br>Ошибка в работе сервера!</em>")
-						requests.get(get_settings()[1]["error"], json={"type": "server"})
+						requests.get(get_settings()[1]["stat"], json={"type": "server"})
 						
 					eel.sleep(2.0)
 					ser.open()
@@ -149,11 +157,11 @@ def device_communication(device):
 					eel.showError("<em>Внимание!<br>Ошибка в работе сервера!</em>")
 		except serial.SerialException or serial.PortNotOpenError:
 			eel.showError("<em>Внимание!<br>Ошибка в работе устройства или связанного с ней модуля!</em>")
-			requests.get(get_settings()[1]["error"], json={"type": "device"})
+			requests.get(get_settings()[1]["stat"], json={"type": "device"})
 			change_state(device)
 		except requests.RequestException or requests.ConnectionError:
 			eel.showError("<em>Внимание!<br>Ошибка в отправке запроса на сервер!</em>")
-			requests.get(get_settings()[1]["error"], json={"type": "program"})
+			requests.get(get_settings()[1]["stat"], json={"type": "program"})
 			change_state(device)
 	ser.close()
 

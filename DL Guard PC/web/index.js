@@ -1,7 +1,7 @@
 const rlNode = document.getElementById("readers");
 const rlcNode = document.getElementById("changeReadersList");
 const pathInput = document.getElementById("pathInput");
-const errorPathInput = document.getElementById("errorPathInput");
+const statPathInput = document.getElementById("statPathInput");
 
 eel.expose(getReaders);
 eel.expose(sendFeedback);
@@ -11,7 +11,7 @@ eel.expose(showError);
 
 let readersList = [];
 let serverPath;
-let errorPath;
+let statPath;
 
 const renderDevices = () => {
 	rlNode.innerHTML = "";
@@ -104,17 +104,17 @@ const changePath = () => {
 	}
 };
 
-const changeErrorPath = () => {
-	if (errorPathInput.value.trim() == "") {
+const changeStatPath = () => {
+	if (statPathInput.value.trim() == "") {
 		sendFeedback(
 			"settings",
 			"<i>Ошибка!<br>Поле адреса отправки отчётов не может быть пустым!</i>"
 		);
-	} else if (errorPathInput.value.trim() == errorPath) {
+	} else if (statPathInput.value.trim() == statPath) {
 		return;
 	} else {
-		eel.change_path(errorPathInput.value.trim())();
-		errorPathInput.value = "";
+		eel.change_stat(statPathInput.value.trim())();
+		statPathInput.value = "";
 	}
 };
 
@@ -219,9 +219,9 @@ function getReaders() {
 	eel.get_settings()(function (data) {
 		readersList = data[0];
 		serverPath = data[1].path;
-		errorPath = data[1].error;
+		statPath = data[1].stat;
 		pathInput.placeholder = serverPath;
-		errorPathInput.placeholder = errorPath;
+		statPathInput.placeholder = statPath;
 		renderDevices();
 	});
 	eel.render_devices()();
