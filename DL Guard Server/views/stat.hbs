@@ -1,0 +1,22 @@
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+		<title>Статистика</title>
+		<link rel="stylesheet" href="stat.css" />
+	</head>
+	<body>
+		{{#if haveData}}
+			<div>
+				<h1>Статистика</h1>
+				<ul>
+					<li>Пришло вовремя: {{visitors}}</li>
+					<li>Ошибки: {{glitches}}</li>
+				</ul>
+			</div>
+		{{else}}
+			<h1>Нет данных</h1>
+		{{/if}}
+	</body>
+</html>
