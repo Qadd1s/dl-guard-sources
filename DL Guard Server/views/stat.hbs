@@ -1,22 +1,107 @@
-<html lang="en">
+<html lang="ru">
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
 		<title>Статистика</title>
 		<link rel="stylesheet" href="stat.css" />
+		<script
+			src="https://cdn.plot.ly/plotly-2.30.0.min.js"
+			charset="utf-8"
+		></script>
 	</head>
 	<body>
 		{{#if haveData}}
-			<div>
+			<div class="graphics">
 				<h1>Статистика</h1>
-				<ul>
-					<li>Пришло вовремя: {{visitors}}</li>
-					<li>Ошибки: {{glitches}}</li>
-				</ul>
+				<div id="visitorsPie"></div>
+				<div id="glitchesChart"></div>
 			</div>
 		{{else}}
 			<h1>Нет данных</h1>
 		{{/if}}
 	</body>
+
+	<script defer>
+		let visitors = `{{visitors}}`;
+		let glitches = `{{glitches}}`;
+
+		if (visitors == [0, 0]) {
+			document.getElementById("visitorsPie").innerHTML = "<h2>Нет посетивших</h2>"
+		} else {
+			visitors = visitors.split(",").map(Number);
+			plotVisitors()
+		}
+
+		if (glitches == [0, 0, 0]) {
+			document.getElementById("glitchesChart").innerHTML = "<h2>Нет сбоев</h2>"
+		} else {
+			glitches = glitches.split(",").map(Number);
+			plotGlitches()
+		}
+
+		function plotVisitors() {
+			let visitorsData = [{
+				values: visitors,
+				labels: ["Пришли вовремя", "Опоздали"],
+				type: "pie",
+				name: "Статистика посещения",
+				marker: {
+					colors: ["#3d51ff", "#ff3d3d"]
+				},
+				textinfo: "label+percent",
+				textposition: "outside",
+				hoverinfo: "value"
+			}];
+
+			let visitorsLayout = {
+				height: 500,
+				width: 500,
+				title: "Статистика посещения",
+				titlefont: {
+					size: 20,
+					color: "#5f2bf0"
+				},
+				font: {
+					color: "#FAFAFA",
+					size: 14
+				},
+				plot_bgcolor: "rgba(0, 0, 0, 0)",
+				paper_bgcolor: "rgba(0, 0, 0, 0)",
+				showlegend: false
+			};
+
+			Plotly.newPlot("visitorsPie", visitorsData, visitorsLayout);
+		}
+
+		function plotGlitches() {
+			let glitchesData = [{
+				y: glitches,
+				x: ["Устройства", "Сервер", "Программа"],
+				marker: {
+					color: ["#ff8e3d", "#d3e84d", "#3dff98"]
+				},
+				hoverinfo: "none",
+				type: "bar"
+			}];
+
+			let glitchesLayout = {
+				height: 500,
+				width: 500,
+				title: "Статистика сбоев",
+				titlefont: {
+					size: 20,
+					color: "#5f2bf0"
+				},
+				font: {
+					color: "#FAFAFA",
+					size: 14
+				},
+				plot_bgcolor: "rgba(0, 0, 0, 0)",
+				paper_bgcolor: "rgba(0, 0, 0, 0)",
+			};
+
+			Plotly.newPlot("glitchesChart", glitchesData, glitchesLayout);
+		}
+	</script>
 </html>

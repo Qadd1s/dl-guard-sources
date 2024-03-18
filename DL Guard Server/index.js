@@ -86,7 +86,7 @@ app.get("/", async (req, res) => {
 		{
 			$addFields: {
 				todayDate: {
-					$toDate: "2024-03-16T05:30:00.000+00:00",
+					$toDate: today,
 				},
 			},
 		},
@@ -157,17 +157,11 @@ app.get("/", async (req, res) => {
 		},
 	]);
 
-	if (statData) {
-		res.render("stat", {
-			haveData: true,
-			visitors: statData[0].visitors,
-			glitches: statData[0].glitches,
-		});
-	} else {
-		res.render("stat", {
-			haveData: false,
-		});
-	}
+	res.render("stat", {
+		haveData: statData != [],
+		visitors: statData[0].visitors,
+		glitches: statData[0].glitches,
+	});
 });
 
 app.post("/check-uid", async (req, res) => {
