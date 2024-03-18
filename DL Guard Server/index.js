@@ -86,7 +86,7 @@ app.get("/", async (req, res) => {
 		{
 			$addFields: {
 				todayDate: {
-					$toDate: "2024-03-16T05:30:00.000+00:00",
+					$toDate: today,
 				},
 			},
 		},
