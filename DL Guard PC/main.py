@@ -155,9 +155,12 @@ def device_communication(device):
 					ser.open()
 				else:
 					eel.showError("<em>Внимание!<br>Ошибка в работе сервера!</em>")
-		except serial.SerialException or serial.PortNotOpenError:
+		except serial.SerialException:
 			eel.showError("<em>Внимание!<br>Ошибка в работе устройства или связанного с ней модуля!</em>")
 			requests.get(get_settings()[1]["stat"], json={"type": "device"})
+			change_state(device)
+		except serial.PortNotOpenError:
+			eel.showError("<em>Внимание!<br>Данный порт отсутствует (проверьте, подключено ли устройство)</em>")
 			change_state(device)
 		except requests.RequestException or requests.ConnectionError:
 			eel.showError("<em>Внимание!<br>Ошибка в отправке запроса на сервер!</em>")
