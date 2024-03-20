@@ -28,14 +28,12 @@ void loop(void) {
     String hex_value = "";
     for (uint8_t i=0; i < uidLength; i++) 
     {
-      //Serial.print(" 0x");Serial.print(uid[i], HEX);       
+     
       Serial.print(" ");Serial.print(uid[i], HEX);       
       hex_value += (String)uid[i];
     }
 
-    //Serial.println(", value="+hex_value);
     Serial.println("");
-    // Wait 1 second before continuing
     delay(1000);
   }
 }
