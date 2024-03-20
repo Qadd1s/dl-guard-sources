@@ -14,8 +14,10 @@
 		{{#if haveData}}
 			<div class="graphics">
 				<h1>Статистика</h1>
-				<div id="visitorsPie"></div>
-				<div id="glitchesChart"></div>
+				<div class="wrapper">
+					<div id="visitorsPie"></div>
+					<div id="glitchesChart"></div>
+				</div>
 			</div>
 		{{else}}
 			<h1>Нет данных</h1>
@@ -45,7 +47,7 @@
 				values: visitors,
 				labels: ["Пришли вовремя", "Опоздали"],
 				type: "pie",
-				name: "Статистика посещения",
+				name: "График посещаемости",
 				marker: {
 					colors: ["#3d51ff", "#ff3d3d"]
 				},
@@ -56,8 +58,8 @@
 
 			let visitorsLayout = {
 				height: 500,
-				width: 500,
-				title: "Статистика посещения",
+				width: 600,
+				title: "Посещаемость",
 				titlefont: {
 					size: 20,
 					color: "#5f2bf0"
@@ -88,7 +90,7 @@
 			let glitchesLayout = {
 				height: 500,
 				width: 500,
-				title: "Статистика сбоев",
+				title: "Сбои",
 				titlefont: {
 					size: 20,
 					color: "#5f2bf0"

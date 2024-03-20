@@ -73,7 +73,7 @@ const Stat = mongoose.model("stats", statsSchema);
 
 // Starting the server
 app.listen(port, () => {
-	console.log(`Сервер запущен по адресу: http://localhost:${port}/`);
+	console.log(`The server is running on: http://localhost:${port}/`);
 });
 
 // Routes
@@ -158,9 +158,9 @@ app.get("/", async (req, res) => {
 	]);
 
 	res.render("stat", {
-		haveData: statData != [],
-		visitors: statData[0].visitors,
-		glitches: statData[0].glitches,
+		haveData: statData.length != 0,
+		visitors: statData.length != 0 ? statData[0].visitors : "No data",
+		glitches: statData.length != 0 ? statData[0].glitches : "No data",
 	});
 });
 
